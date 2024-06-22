@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lista de Pacientes e Agendamento</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <h2>Lista de Pacientes</h2>
+        <div class="patient-list" id="patientList">
+            <ol></ol> <!-- Usando <ol> (ordered list) em vez de <ul> -->
+        </div>
+        <div id="appointmentFormContainer" style="display: none;">
+            <h3>Agendar Consulta</h3>
+            <form id="appointmentForm">
+                <label for="day">Dia:</label>
+                <input type="date" id="day" name="day" required><br><br>
+                <label for="time">Hora:</label>
+                <input type="time" id="time" name="time" required><br><br>
+                <label for="specialty">Especialidade:</label>
+                <select id="specialty" name="specialty" required>
+                    <option value="">Selecione uma especialidade</option>
+                    <option value="Clínico Geral">Clínico Geral</option>
+                    <option value="Dermatologista">Dermatologista</option>
+                    <option value="Pediatra">Pediatra</option>
+                    <option value="Ortopedista">Ortopedista</option>
+                    <!-- Adicione outras especialidades conforme necessário -->
+                </select><br><br>
+                <input type="submit" value="Agendar">
+            </form>
+        </div>
+        <div class="appointment-list" id="appointmentList">
+            <h2>Lista de Agendamentos</h2>
+            <ul></ul>
+        </div>
+        <a href="index.html" class="button">Voltar</a>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const patientList = document.getElementById('patientList').querySelector('ol');
+            const appointmentList = document.getElementById('appointmentList').querySelector('ul');
+            const appointmentFormContainer = document.getElementById('appointmentFormContainer');
+            const appointmentForm = document.getElementById('appointmentForm');
+
+            // Array para armazenar os horários já agendados
+            let scheduledAppointments = [];
+
+            // Função para exibir os pacientes na lista
+            function displayPatients() {
+                fetch('/api/pacientes')
+                    .then(response => response.json())
+                    .then(data => {
+                        data.forEach((patient, index) => {
+                            const patientItem = document.createElement('li');
+                            patientItem.textContent = `${index + 1}. Nome: ${patient.name}, Telefone: ${patient.phone}`;
+                            patientItem.style.cursor = 'pointer'; // Adiciona cursor pointer para indicar que é clicável
+                            patientItem.addEventListener('click', () => showAppointmentForm(patient));
+                            patientList.appendChild(patientItem);
+                        });
+                    })
+                    .catch(error => {
+                        console.error('Erro ao carregar pacientes:', error);
+                    });
+            }
+
+            // Exibe os pacientes ao carregar a página
+            displayPatients();
+
+            // Evento de envio do formulário de agendamento
+            appointmentForm.addEventListener('submit', function(event) {
+                event.preventDefault(); // Previne o envio padrão do formulário
+
+                const day = document.getElementById('day').value;
+                const time = document.getElementById('time').value;
+                const specialty = document.getElementById('specialty').value;
+
+                // Verifica se a data e hora estão disponíveis para a especialidade selecionada
+                if (!isDateTimeAvailable(day, time, specialty)) {
+                    alert('O horário selecionado já está ocupado para esta especialidade. Por favor, escolha outro horário.');
+                    return;
+                }
+
+                // Verifica se a data não é retroativa
+                if (!isDateValid(day)) {
+                    alert('Não é possível agendar consultas retroativas. Por favor, escolha uma data válida.');
+                    return;
+                }
+
+                const newAppointment = {
+                    day,
+                    time,
+                    specialty
+                };
+
+                // Envia o novo agendamento para o servidor
+                fetch('/api/agendamentos', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(newAppointment),
+                })
+                .then(response => response.text())
+                .then(message => {
+                    alert(message);
+                    // Adiciona o novo agendamento à lista na interface do usuário
+                    const appointmentItem = document.createElement('li');
+                    appointmentItem.textContent = `Consulta marcada para ${newAppointment.day} às ${newAppointment.time} na especialidade de ${newAppointment.specialty}`;
+                    appointmentList.appendChild(appointmentItem);
+
+                    // Adiciona o horário agendado ao array de horários agendados
+                    scheduledAppointments.push(newAppointment);
+
+                    // Limpar o formulário
+                    appointmentForm.reset();
+
+                    // Esconder o formulário de agendamento após enviar
+                    appointmentFormContainer.style.display = 'none';
+
+                    // Redireciona para a tela inicial (index.html)
+                    window.location.href = 'index.html';
+                })
+                .catch(error => {
+                    console.error('Erro ao agendar consulta:', error);
+                    alert('Erro ao agendar consulta. Por favor, tente novamente.');
+                });
+            });
+
+            // Função para verificar se a data e hora estão disponíveis para a especialidade selecionada
+            function isDateTimeAvailable(day, time, specialty) {
+                // Verifica se o horário já está agendado para a especialidade selecionada
+                for (let i = 0; i < scheduledAppointments.length; i++) {
+                    if (scheduledAppointments[i].day === day && scheduledAppointments[i].time === time && scheduledAppointments[i].specialty === specialty) {
+                        return false;
+                    }
+                }
+                return true;
+            }
+
+            // Função para verificar se a data não é retroativa
+            function isDateValid(day) {
+                const today = new Date();
+                const selectedDate = new Date(day);
+                return selectedDate >= today;
+            }
+
+            // Função para exibir o formulário de agendamento com o nome do paciente selecionado
+            function showAppointmentForm(patient) {
+                // Mostrar o formulário de agendamento
+                appointmentFormContainer.style.display = 'block';
+
+                // Adicionar um título personalizado no formulário para o paciente selecionado
+                const formTitle = document.createElement('h3');
+                formTitle.textContent = `Agendar consulta para ${patient.name}`;
+                appointmentFormContainer.insertBefore(formTitle, appointmentFormContainer.firstChild);
+            }
+        });
+    </script>
+</body>
+</html>

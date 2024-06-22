@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Consultas Agendadas</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <h2>Consultas Agendadas</h2>
+        <div class="appointment-list" id="appointmentList">
+            <ol id="scheduledAppointments"></ol>
+        </div>
+        <a href="index.html" class="button">Voltar</a>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const scheduledAppointmentsList = document.getElementById('scheduledAppointments');
+
+            // Função para carregar e exibir as consultas agendadas
+            function loadScheduledAppointments() {
+                fetch('/api/agendamentos')
+                    .then(response => response.json())
+                    .then(data => {
+                        data.forEach((appointment, index) => {
+                            const appointmentItem = document.createElement('li');
+                            appointmentItem.textContent = `${index + 1}. Dia: ${appointment.day}, Hora: ${appointment.time}, Especialidade: ${appointment.specialty}`;
+                            appointmentItem.style.cursor = 'pointer'; // Adiciona cursor pointer para indicar que é clicável
+                            appointmentItem.addEventListener('click', () => showCancelConfirmation(appointment, index));
+                            scheduledAppointmentsList.appendChild(appointmentItem);
+                        });
+                    })
+                    .catch(error => {
+                        console.error('Erro ao carregar os agendamentos:', error);
+                    });
+            }
+
+            // Exibe as consultas agendadas ao carregar a página
+            loadScheduledAppointments();
+
+            // Função para exibir mensagem de confirmação para cancelar a consulta
+            function showCancelConfirmation(appointment, index) {
+                const confirmCancel = confirm(`Você deseja cancelar a consulta agendada para ${appointment.day} às ${appointment.time} na especialidade de ${appointment.specialty}?`);
+
+                if (confirmCancel) {
+                    // Remove o agendamento da lista
+                    removeAppointment(index);
+                }
+            }
+
+            // Função para remover o agendamento
+            function removeAppointment(index) {
+                fetch('/api/agendamentos/' + index, {
+                    method: 'DELETE'
+                })
+                .then(response => {
+                    if (response.ok) {
+                        alert('Consulta cancelada com sucesso.');
+                        // Redireciona para a tela inicial
+                        window.location.href = 'index.html';
+                    } else {
+                        alert('Erro ao cancelar a consulta. Por favor, tente novamente.');
+                    }
+                })
+                .catch(error => {
+                    console.error('Erro ao cancelar consulta:', error);
+                    alert('Erro ao cancelar a consulta. Por favor, tente novamente.');
+                });
+            }
+        });
+    </script>
+</body>
+</html>

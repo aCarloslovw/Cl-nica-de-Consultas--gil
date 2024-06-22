@@ -1,0 +1,111 @@
+body {
+    font-family: 'Arial', sans-serif;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    background-color: #f0f0f0; /* Fundo cinza claro */
+}
+
+.container {
+    text-align: center;
+    max-width: 600px;
+    padding: 30px;
+    background-color: #fff;
+    border-radius: 8px;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.1); /* Sombra mais pronunciada */
+}
+
+h2 {
+    color: #007bff; /* Azul forte para os títulos */
+}
+
+.form-group {
+    margin-bottom: 20px; /* Espaçamento inferior entre os campos */
+}
+
+label {
+    display: block;
+    margin-bottom: 8px;
+    color: #555; /* Cor do texto dos rótulos */
+}
+
+input[type="text"] {
+    width: calc(100% - 20px); /* Largura ajustada para os inputs */
+    padding: 10px;
+    border: 1px solid #ddd; /* Borda cinza clara */
+    border-radius: 4px;
+    font-size: 16px;
+    transition: border-color 0.3s ease; /* Transição suave da cor da borda */
+}
+
+input[type="text"]:focus {
+    outline: none;
+    border-color: #007bff; /* Cor da borda ao focar */
+}
+
+.error-message {
+    color: #dc3545; /* Vermelho para mensagens de erro */
+    font-size: 14px;
+    margin-top: 5px; /* Espaçamento superior para mensagens de erro */
+    display: none;
+}
+
+.success-message {
+    color: #28a745; /* Verde para mensagens de sucesso */
+    font-size: 18px;
+    font-weight: bold;
+    margin-top: 10px; /* Espaçamento superior para mensagens de sucesso */
+    display: none;
+}
+
+.button {
+    display: inline-block;
+    padding: 12px 24px;
+    text-decoration: none;
+    background-color: #007bff;
+    color: #fff;
+    border: none;
+    border-radius: 4px;
+    font-size: 16px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.button:hover {
+    background-color: #0056b3;
+}
+
+.patient-list {
+    margin-top: 30px;
+}
+
+ul {
+    list-style-type: none; /* Remove marcadores da lista */
+    padding: 0;
+}
+
+ul li {
+    margin-bottom: 10px; /* Espaçamento inferior entre os itens da lista */
+    padding: 10px;
+    background-color: #f9f9f9; /* Fundo cinza claro para os itens da lista */
+    border-radius: 4px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Sombra leve */
+    transition: box-shadow 0.3s ease;
+}
+
+ul li:hover {
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Sombra mais pronunciada ao passar o mouse */
+}
+
+@media (max-width: 768px) {
+    .container {
+        padding: 20px; /* Espaçamento interno reduzido em telas menores */
+    }
+
+    input[type="text"] {
+        width: 100%; /* Largura total para inputs em telas menores */
+    }
+}

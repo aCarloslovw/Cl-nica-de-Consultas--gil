@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cadastro de Pacientes</title>
+    <style>
+        /* Reset básico para garantir consistência */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f0f0f0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+
+        .container {
+            text-align: center;
+            max-width: 600px;
+            padding: 20px;
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        h1 {
+            font-size: 24px;
+            margin-bottom: 20px;
+            color: #333;
+        }
+
+        .menu {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .button {
+            display: inline-block;
+            padding: 12px 24px;
+            margin: 10px;
+            text-decoration: none;
+            background-color: #007bff;
+            color: #fff;
+            border-radius: 4px;
+            transition: background-color 0.3s ease;
+        }
+
+        .button:hover {
+            background-color: #0056b3;
+        }
+
+        /* Estilo para botão de sair */
+        .menu a#btnSair {
+            background-color: #dc3545; /* Vermelho escuro */
+        }
+
+        .menu a#btnSair:hover {
+            background-color: #c82333; /* Vermelho mais claro ao passar o mouse */
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Bem-vindo ao Sistema de Cadastro de Pacientes</h1>
+        <div class="menu">
+            <a href="cadastro.html" class="button">Cadastrar Novo Paciente</a>
+            <a href="pacientes.html" class="button">Lista de Pacientes</a>
+            <a href="consultas.html" class="button">Lista de agendamentos</a>
+            <a href="#" id="btnSair" class="button">Sair</a>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const btnSair = document.getElementById('btnSair');
+
+            btnSair.addEventListener('click', function(event) {
+                event.preventDefault();
+                if (confirm('Deseja realmente encerrar a execução?')) {
+                    alert('Você encerrou a execução.');
+                    // Aqui poderia ser adicionada a lógica para redirecionar ou finalizar a execução da aplicação
+                    // Por exemplo: window.close();
+                }
+            });
+        });
+    </script>
+</body>
+</html>
